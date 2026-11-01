@@ -22,7 +22,7 @@ pipeline {
                 sh 'rm -f ./*.tar.gz'
 
                 sh 'mkdir -p out'
-                sh 'echo "version=1.0.${BUILD_NUMBER}" > out/version.txt'
+                sh 'touch out/version.txt'
             }
         }
 
