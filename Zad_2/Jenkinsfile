@@ -45,5 +45,19 @@ pipeline {
                 sh 'echo "Packaged ${ARTIFACT}"'
             }
         }
+
+        stage('Deploy') {
+            when {
+                allOf {
+                    expression {
+                        params.DEPLOY_ENV == 'prod'
+                        branch 'main'
+                    }
+                }
+            }
+            steps{
+                echo "Deploying ${ARTIFACT} to production"
+            }
+        }
     }
 }
