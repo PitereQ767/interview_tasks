@@ -51,8 +51,8 @@ pipeline {
                 allOf {
                     expression {
                         params.DEPLOY_ENV == 'prod'
-                        branch 'main'
                     }
+                    branch 'main'
                 }
             }
             steps{
