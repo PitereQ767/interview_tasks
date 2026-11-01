@@ -14,7 +14,7 @@ pipeline {
 
     stage('Prepare') {
       steps {
-        sh 'chmod +x ./check-logs.sh'
+        sh 'chmod +x ./Zad_1/check-logs.sh'
       }
     }
 
@@ -22,7 +22,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash
           set -o pipefail
-          ./check-logs.sh ./logs | tee check-logs-output.txt
+          ./Zad_1/check-logs.sh ./logs | tee check-logs-output.txt
         '''
       }
     }
