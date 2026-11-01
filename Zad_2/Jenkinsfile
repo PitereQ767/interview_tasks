@@ -18,14 +18,8 @@ pipeline {
             steps {
                 echo "Selected environment: ${params.DEPLOY_ENV}"
 
-                sh 'echo "Before cleanup:"'
-                sh 'ls -la'
-
                 sh 'rm -rf out'
                 sh 'rm -f ./*.tar.gz'
-
-                sh 'echo "After cleanup:"'
-                sh 'ls -la'
 
                 sh 'mkdir -p out'
                 sh 'echo "version=1.0.${BUILD_NUMBER}" > out/version.txt'
@@ -35,6 +29,14 @@ pipeline {
         stage('Package') {
             steps {
                 sh 'tar czf ${ARTIFACT} out/'
+            }
+        }
+
+        stage('Test') {
+            steps{
+                sh '''cat out/version.txt
+                test -s out/version.txt
+                '''
             }
         }
 
