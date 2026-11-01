@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    parameters {
+        name: 'DEPLOY_ENV',
+        choices: ['dev', 'staging', 'prod'],
+        description: 'Environment selected for deployment'
+    }
+
+    environment {
+        ARTIFACT = "app-${BUILD_NUMBER}.tar.gz"
+    }
+
+    stages {
+        stage('Prepare') {
+            steps {
+                echo "Selected environment: ${params.DEPLOY_ENV}"
+                sh 'mkdir -p out'
+                sh 'echo "version=1.0.${BUILD_NUMBER}" > out/version.txt'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'tar czf ${ARTIFACT} out/'
+            }
+        }
+
+        stage('Report') {
+            steps {
+                sh 'echo "Packaged ${ARTIFACT}"'
+            }
+        }
+    }
+}

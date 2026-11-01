@@ -1,0 +1,36 @@
+pipeline {
+  agent any
+
+  options {
+    skipDefaultCheckout(true)
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Prepare') {
+      steps {
+        sh 'chmod +x ./check-logs.sh'
+      }
+    }
+
+    stage('Check logs') {
+      steps {
+        sh '''#!/bin/bash
+          set -o pipefail
+          ./check-logs.sh ./logs | tee check-logs-output.txt
+        '''
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'check-logs-output.txt', allowEmptyArchive: true
+    }
+  }
+}

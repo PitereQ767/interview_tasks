@@ -1,0 +1,7 @@
+2026-10-30 10:00:00 INFO Application started
+2026-10-30 10:01:12 INFO User logged in
+2026-10-30 10:02:45 INFO Database connection failed
+2026-10-30 10:03:01 WARN Retrying connection
+2026-10-30 10:03:05 INFO Database connection restored
+2026-10-30 10:05:20 INFO Unable to process request
+2026-10-30 10:06:00 INFO Application stopped
