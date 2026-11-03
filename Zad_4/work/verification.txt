@@ -1,0 +1,214 @@
+=== Tool versions and node readiness ===
+kind v0.33.0 go1.26.7 linux/amd64
+Client Version: v1.36.1
+Kustomize Version: v5.8.1
+node/docker-k8s-interview-control-plane condition met
+NAME                                 STATUS   ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                       KERNEL-VERSION                   CONTAINER-RUNTIME
+docker-k8s-interview-control-plane   Ready    control-plane   43m   v1.37.0   172.18.0.2    <none>        Debian GNU/Linux 13 (trixie)   7.2.14-200.fc44.x86_64 (amd64)   containerd://2.3.4
+
+=== Deployment, pods, Service, and EndpointSlices ===
+deployment "web" successfully rolled out
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"web","namespace":"interview"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"interview-web"}},"template":{"metadata":{"labels":{"app":"interview-web"}},"spec":{"containers":[{"command":["python","/app/app.py"],"env":[{"name":"APP_MESSAGE","value":"Hello from Kubernetes"}],"image":"localhost/docker-k8s-interview-app:1.0","imagePullPolicy":"Never","livenessProbe":{"httpGet":{"path":"/healthz","port":"http"},"initialDelaySeconds":5,"periodSeconds":5},"name":"web","ports":[{"containerPort":8080,"name":"http"}],"readinessProbe":{"httpGet":{"path":"/healthz","port":"http"},"initialDelaySeconds":2,"periodSeconds":3},"resources":{"limits":{"cpu":"250m","memory":"64Mi"},"requests":{"cpu":"50m","memory":"32Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"runAsNonRoot":true,"runAsUser":10001}}]}}}}
+  creationTimestamp: "2026-11-03T14:22:48Z"
+  generation: 2
+  name: web
+  namespace: interview
+  resourceVersion: "2996"
+  uid: 2894264e-e7ab-41f3-a6d9-4c0225de0e22
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: interview-web
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: interview-web
+    spec:
+      containers:
+      - command:
+        - python
+        - /app/app.py
+        env:
+        - name: APP_MESSAGE
+          value: Hello from Kubernetes
+        image: localhost/docker-k8s-interview-app:1.0
+        imagePullPolicy: Never
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: web
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 2
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 250m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 32Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 10001
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 2
+  conditions:
+  - lastTransitionTime: "2026-11-03T14:37:10Z"
+    lastUpdateTime: "2026-11-03T14:37:10Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2026-11-03T14:36:57Z"
+    lastUpdateTime: "2026-11-03T14:37:10Z"
+    message: ReplicaSet "web-5569d7445c" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 2
+  readyReplicas: 2
+  replicas: 2
+  terminatingReplicas: 0
+  updatedReplicas: 2
+NAME                   READY   STATUS    RESTARTS   AGE   LABELS
+web-5569d7445c-h9cjx   1/1     Running   0          15m   app=interview-web,pod-template-hash=5569d7445c
+web-5569d7445c-r2bxm   1/1     Running   0          15m   app=interview-web,pod-template-hash=5569d7445c
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"web","namespace":"interview"},"spec":{"ports":[{"name":"http","port":80,"targetPort":8080}],"selector":{"app":"interview-web"},"type":"ClusterIP"}}
+  creationTimestamp: "2026-11-03T14:22:48Z"
+  name: web
+  namespace: interview
+  resourceVersion: "3982"
+  uid: f3e0656a-1069-4c0c-96d9-15462898d632
+spec:
+  clusterIP: 10.96.117.188
+  clusterIPs:
+  - 10.96.117.188
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: interview-web
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+apiVersion: v1
+items:
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.244.0.7
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: docker-k8s-interview-control-plane
+    targetRef:
+      kind: Pod
+      name: web-5569d7445c-h9cjx
+      namespace: interview
+      uid: e944edd7-e4da-4ed1-bd36-d888e2f9ef10
+  - addresses:
+    - 10.244.0.8
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: docker-k8s-interview-control-plane
+    targetRef:
+      kind: Pod
+      name: web-5569d7445c-r2bxm
+      namespace: interview
+      uid: a572af96-9110-46d5-8267-0340a28bc0c7
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-11-03T14:37:02Z"
+    creationTimestamp: "2026-11-03T14:22:48Z"
+    generateName: web-
+    generation: 2
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: web
+    name: web-n7sr8
+    namespace: interview
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: web
+      uid: f3e0656a-1069-4c0c-96d9-15462898d632
+    resourceVersion: "3984"
+    uid: ea67cbaf-4621-4aee-94f3-e50fa455a74e
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+kind: List
+metadata:
+  resourceVersion: ""
+
+=== HTTP through web.interview.svc.cluster.local:80 ===
+pod/interview-http-check-112366 created
+pod/interview-http-check-112366 condition met
+/healthz: HTTP 200 ok
+/: HTTP 200 {"message": "Hello from Kubernetes", "hostname": "web-5569d7445c-h9cjx"}
+Service HTTP checks passed.
+
+VERIFICATION PASSED

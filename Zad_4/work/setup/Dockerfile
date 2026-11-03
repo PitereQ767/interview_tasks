@@ -1,0 +1,7 @@
+FROM docker.io/library/python:3.12-alpine
+WORKDIR /app
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PORT=8080
+COPY app.py .
+USER 10001:10001
+EXPOSE 8080
+CMD ["python", "app.py"]
