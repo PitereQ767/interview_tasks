@@ -1,0 +1,47 @@
+Task 3 - Docker verification
+
+1. Build the image:
+
+docker build -t interview-docker:candidate .
+
+Result: the image was built successfully and tagged as interview-docker:candidate.
+
+2. Run the container:
+
+docker run -d --name interview-docker-candidate \
+  -p 127.0.0.1:18080:8080 interview-docker:candidate
+
+3. Confirm that the container is running:
+
+docker ps
+
+Result: interview-docker-candidate was running with port mapping
+127.0.0.1:18080->8080/tcp.
+
+4. Verify the application endpoint:
+
+curl -fsS http://127.0.0.1:18080/
+
+Result:
+{"message": "Hello from the interview app", "hostname": "1f69e80dcfb9"}
+
+5. Verify the health endpoint:
+
+curl -fsS http://127.0.0.1:18080/healthz
+
+Result:
+ok
+
+6. Inspect the container logs:
+
+docker logs interview-docker-candidate
+
+Result: the application was listening on 0.0.0.0:8080 and both verification
+requests returned HTTP 200.
+
+7. Clean up the container and image:
+
+docker rm -f interview-docker-candidate
+docker image rm interview-docker:candidate
+
+Result: the test container and image were removed successfully.
